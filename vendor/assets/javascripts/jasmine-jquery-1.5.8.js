@@ -87,7 +87,7 @@ var getJSONFixture = function(url) {
 }
 
 jasmine.spiedEventsKey = function (selector, eventName) {
-  return [$(selector).selector, eventName].toString()
+  return [jQuery(selector).selector, eventName].toString()
 }
 
 jasmine.getFixtures = function() {
@@ -142,24 +142,24 @@ jasmine.Fixtures.prototype.clearCache = function() {
 }
 
 jasmine.Fixtures.prototype.cleanUp = function() {
-  $('#' + this.containerId).remove()
+  jQuery('#' + this.containerId).remove()
 }
 
 jasmine.Fixtures.prototype.sandbox = function(attributes) {
   var attributesToSet = attributes || {}
-  return $('<div id="sandbox" />').attr(attributesToSet)
+  return jQuery('<div id="sandbox" />').attr(attributesToSet)
 }
 
 jasmine.Fixtures.prototype.createContainer_ = function(html) {
-  var container = $('<div>')
+  var container = jQuery('<div>')
     .attr('id', this.containerId)
     .html(html);
-  $(document.body).append(container)
+  jQuery(document.body).append(container)
   return container
 }
 
 jasmine.Fixtures.prototype.addToContainer_ = function(html){
-  var container = $(document.body).find('#'+this.containerId).append(html)
+  var container = jQuery(document.body).find('#'+this.containerId).append(html)
   if(!container.length){
     this.createContainer_(html)
   }
@@ -174,7 +174,7 @@ jasmine.Fixtures.prototype.getFixtureHtml_ = function(url) {
 
 jasmine.Fixtures.prototype.loadFixtureIntoCache_ = function(relativeUrl) {
   var url = this.makeFixtureUrl_(relativeUrl)
-  var request = $.ajax({
+  var request = jQuery.ajax({
     type: "GET",
     url: url + "?" + new Date().getTime(),
     async: false
@@ -226,12 +226,12 @@ jasmine.StyleFixtures.prototype.cleanUp = function() {
 }
 
 jasmine.StyleFixtures.prototype.createStyle_ = function(html) {
-  var styleText = $('<div></div>').html(html).text(),
-    style = $('<style>' + styleText + '</style>')
+  var styleText = jQuery('<div></div>').html(html).text(),
+    style = jQuery('<style>' + styleText + '</style>')
 
   this.fixturesNodes_.push(style)
 
-  $('head').append(style)
+  jQuery('head').append(style)
 }
 
 jasmine.StyleFixtures.prototype.clearCache = jasmine.Fixtures.prototype.clearCache
@@ -280,7 +280,7 @@ jasmine.JSONFixtures.prototype.getFixtureData_ = function(url) {
 jasmine.JSONFixtures.prototype.loadFixtureIntoCache_ = function(relativeUrl) {
   var self = this
   var url = this.fixturesPath.match('/$') ? this.fixturesPath + relativeUrl : this.fixturesPath + '/' + relativeUrl
-  $.ajax({
+  jQuery.ajax({
     async: false, // must be synchronous to guarantee that no tests are run before fixture is loaded
     cache: false,
     dataType: 'json',
@@ -301,13 +301,13 @@ jasmine.JSONFixtures.prototype.proxyCallTo_ = function(methodName, passedArgumen
 jasmine.JQuery = function() {}
 
 jasmine.JQuery.browserTagCaseIndependentHtml = function(html) {
-  return $('<div/>').append(html).html()
+  return jQuery('<div/>').append(html).html()
 }
 
 jasmine.JQuery.elementToString = function(element) {
-  var domEl = $(element).get(0)
+  var domEl = jQuery(element).get(0)
   if (domEl == undefined || domEl.cloneNode)
-    return $('<div />').append($(element).clone()).html()
+    return jQuery('<div />').append(jQuery(element).clone()).html()
   else
     return element.toString()
 }
@@ -325,7 +325,7 @@ jasmine.JQuery.matchersClass = {}
       var handler = function(e) {
         data.spiedEvents[jasmine.spiedEventsKey(selector, eventName)] = jasmine.util.argsToArray(arguments)
       }
-      $(selector).on(eventName, handler)
+      jQuery(selector).on(eventName, handler)
       data.handlers.push(handler)
       return {
         selector: selector,
@@ -412,7 +412,7 @@ jasmine.JQuery.matchersClass = {}
     },
 
     toExist: function() {
-      return $(document).find(this.actual).length
+      return jQuery(document).find(this.actual).length
     },
 
     toHaveLength: function(length) {
@@ -442,8 +442,8 @@ jasmine.JQuery.matchersClass = {}
     },
 
     toHaveText: function(text) {
-      var trimmedText = $.trim(this.actual.text())
-      if (text && $.isFunction(text.test)) {
+      var trimmedText = jQuery.trim(this.actual.text())
+      if (text && jQuery.isFunction(text.test)) {
         return text.test(trimmedText)
       } else {
         return trimmedText == text
@@ -451,8 +451,8 @@ jasmine.JQuery.matchersClass = {}
     },
 
     toContainText: function(text) {
-      var trimmedText = $.trim(this.actual.text())
-      if (text && $.isFunction(text.test)) {
+      var trimmedText = jQuery.trim(this.actual.text())
+      if (text && jQuery.isFunction(text.test)) {
         return text.test(trimmedText)
       } else {
         return trimmedText.indexOf(text) != -1;
@@ -489,7 +489,7 @@ jasmine.JQuery.matchersClass = {}
 
     toHandle: function(event) {
 
-      var events = $._data(this.actual.get(0), "events")
+      var events = jQuery._data(this.actual.get(0), "events")
 
       if(!events || !event || typeof event !== "string") {
         return false
@@ -515,7 +515,7 @@ jasmine.JQuery.matchersClass = {}
     // tests the existence of a specific event binding + handler
     toHandleWith: function(eventName, eventHandler) {
       var normalizedEventName = eventName.split('.')[0];
-      var stack = $._data(this.actual.get(0), "events")[normalizedEventName]
+      var stack = jQuery._data(this.actual.get(0), "events")[normalizedEventName]
       for (var i = 0; i < stack.length; i++) {
         if (stack[i].handler == eventHandler) return true
       }
@@ -535,10 +535,10 @@ jasmine.JQuery.matchersClass = {}
       if (this.actual
         && (this.actual instanceof $
           || jasmine.isDomNode(this.actual))) {
-            this.actual = $(this.actual)
+            this.actual = jQuery(this.actual)
             var result = jQueryMatchers[methodName].apply(this, arguments)
             var element
-            if (this.actual.get && (element = this.actual.get()[0]) && !$.isWindow(element) && element.tagName !== "HTML")
+            if (this.actual.get && (element = this.actual.get()[0]) && !jQuery.isWindow(element) && element.tagName !== "HTML")
               this.actual = jasmine.JQuery.elementToString(this.actual)
             return result
           }
